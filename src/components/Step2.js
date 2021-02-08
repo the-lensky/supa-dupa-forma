@@ -10,6 +10,7 @@ import {useHistory} from 'react-router-dom'
 import PrimaryButton from './PrimaryButton'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import {parsePhoneNumberFromString} from 'libphonenumber-js'
+import {useData} from '../DataContex'
 
 
 const schema = yup.object().shape({
@@ -32,17 +33,20 @@ const normalizePhoneNumber = (value) => {
 }
 
 const Step2 = () => {
+    const history = useHistory()
+    const { data, setValues} = useData()
+
     const {register, handleSubmit, errors, watch} = useForm({
+        defaultValues: { email: data.email, hasPhone: data.hasPhone, phoneNumber: data.phoneNumber},
         mode: 'onBlur',
         resolver: yupResolver(schema)
     })
 
     const hasPhone = watch('hasPhone')
 
-    const history = useHistory()
-
     const onSubmit = (data) => {
         history.push('/step3')
+        setValues(data)
     }
 
     return (
@@ -61,7 +65,7 @@ const Step2 = () => {
                 />
 
                 <FormControlLabel
-                    control={<Checkbox name='hasPhone' inputRef={register} color='primary'/>}
+                    control={<Checkbox defaultValue={data.hasPhone} defaultChecked={data.hasPhone} name='hasPhone' inputRef={register} color='primary'/>}
                     label='Do you have a phone?'
                 />
 
